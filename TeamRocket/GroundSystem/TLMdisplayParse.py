@@ -3,31 +3,40 @@ import tkinter as tk
 from tkinter import font
 from PIL import Image, ImageTk
 import cv2
+import datetime
+import os
 
 
 class TLMdisplayParse(object):
 
     obj = TLMFileRead.TLMFileRead()
-    arr = obj.fileRead('videos/testData.text','videos/testDrone2.mp4')
+#     arr = obj.fileRead('videos/testData.text','videos/testDrone2.mp4')
+    arr = obj.fileRead('videos/testData.text',0)
     
     cap = arr[0]
     listOfArrays = arr[1]
     
-    def __init__(self, vidFrame, msgframe, index, case):
+    def __init__(self, vidFrame, msgframe, index, case, folder):
         self.vidFrame = vidFrame
         self.msgframe = msgframe
         self.index = index
         self.case = case
+        self.folder = folder
         self.display()
 
     def display(self):
         
+        x = datetime.datetime.now()
+        timeStamp = x.strftime("%m%d%Y_%H%M%S")
+        
         cap = self.cap
+        
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  
     
         img = Image.fromarray(gray).resize((600,200))
         imgTk = ImageTk.PhotoImage(image=img)
+        img.save(self.folder +"/frame_" +timeStamp+ ".png")
         self.vidFrame.imgtk = imgTk
         self.vidFrame.configure(image=imgTk)
 
@@ -76,6 +85,6 @@ class TLMdisplayParse(object):
                                      pady=25, width=150)
             self.msgframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=tk.YES)
             var.set(self.listOfArrays[self.case][self.index] + "?")
-
+            
 
         

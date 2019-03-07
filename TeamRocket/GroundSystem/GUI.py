@@ -5,9 +5,13 @@ from tkinter import Frame, LEFT, RIGHT, Label, Button, BOTTOM, RAISED, ACTIVE, m
 from PIL.ImageColor import colormap
 from tkinter.constants import RAISED, GROOVE, SUNKEN, RIDGE
 from GroundSystem import TLMdisplayParse
+#from VideoDetection import VideoCapture
 from numpy.core.defchararray import center
+import os
+import datetime
 
-    
+
+# vidObj = VideoCapture.VideoCapture()    
     
 window = "Team Rocket Live Drone Feed"
 
@@ -86,15 +90,20 @@ def closeDownRead():
 exitButton = Button(root, text="ABORT", command = lambda: closeDownSet(1))
 exitButton.pack(side=BOTTOM, fill=tk.BOTH, expand=tk.YES)
 
+x = datetime.datetime.now()
+timeStamp = x.strftime("%m-%d-%y_%h-%M.%S")
+folder = timeStamp
+os.makedirs(folder)
+
 
 def refreshData(index):
     
-    altObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,altMsg,index,6)
-    tempObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,tempMsg,index,1)
-    pwrObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg,index,21)
-    pwrObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg2,index,20)
-    hlthObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg,index,38)
-    hlthObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg2,index,41)
+    altObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,altMsg,index,6,folder)
+    tempObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,tempMsg,index,1,folder)
+    pwrObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg,index,21,folder)
+    pwrObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg2,index,20,folder)
+    hlthObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg,index,38,folder)
+    hlthObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg2,index,41,folder)
     root.update()
     root.after(50)
 
@@ -111,6 +120,13 @@ while(index < 5084):
         index = 0
 
 #VideoCapture.VideoCapture('videos/testDrone.mov',lVideoFrame)  
+# for filename in os.listdir('videos'):
+#     if filename.endswith(".png"): 
+#         # print(os.path.join(directory, filename))
+#         VideoCapture.VideoCapture.detectImage(filename) 
+#     else:
+#         continue
+
     
 root.destroy()
 root.mainloop()
