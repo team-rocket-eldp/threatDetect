@@ -92,8 +92,12 @@ exitButton.pack(side=BOTTOM, fill=tk.BOTH, expand=tk.YES)
 
 x = datetime.datetime.now()
 timeStamp = x.strftime("%m-%d-%y_%h-%M.%S")
+global folder 
 folder = timeStamp
 os.makedirs(folder)
+file = open("videos/readme.txt", "w+")
+file.write(folder)
+file.close()
 
 
 def refreshData(index):
