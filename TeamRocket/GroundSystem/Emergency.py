@@ -3,7 +3,7 @@ Created on Feb 24, 2019
 
 @author: Riggs-MAC
 '''
-import tkinter
+
 from tkinter import messagebox
 class Emergency(object):
     '''
@@ -17,5 +17,5 @@ class Emergency(object):
         self.emergencyPopUp() 
         
     def emergencyPopUp(self):
-        tkinter.messagebox.showinfo("Emergency Procedure Initialized", 
+        messagebox.showinfo("Emergency Procedure Initialized", 
                                     "Vehicle Returning to Base")

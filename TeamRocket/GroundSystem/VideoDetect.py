@@ -17,9 +17,10 @@ import datetime
 
 index = 0
 
-file = open("videos/readme.txt", "r")
+file = open("readme.txt", "r")
 folder = file.read()
-os.makedirs(folder+"/detects")
+if not os.path.exists(folder+"/detects"):
+    os.makedirs(folder+"/detects")  
 reportF = open(folder+"/detects/detects.txt", "a+")
 
 start = datetime.datetime.now()
@@ -37,9 +38,9 @@ for img in os.listdir(folder):
         
         detector = ObjectDetection()
         detector.setModelTypeAsRetinaNet()
-        detector.setModelPath( os.path.join(execution_path , "videos/resnet50_coco_best_v2.0.1.h5"))
+        detector.setModelPath( os.path.join(execution_path , "models/resnet50_coco_best_v2.0.1.h5"))
         detector.loadModel()
-        custom_objects = detector.CustomObjects(person=True, car=False)
+        custom_objects = detector.CustomObjects(laptop=True, refrigerator=True, tv=True)
         detections = detector.detectCustomObjectsFromImage(input_image=os.path.join(execution_path ,
                                                             folder+"/"+img), output_image_path=os.path.join(execution_path , 
                                                             folder+"/detects/detect_"+timeStamp+".png"), custom_objects=custom_objects, 

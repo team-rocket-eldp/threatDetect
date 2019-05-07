@@ -1,22 +1,22 @@
+#! python
 import tkinter as tk
-from tkinter import Frame, LEFT, RIGHT, Label, Button, BOTTOM, RAISED, ACTIVE, messagebox, ttk
-#from tkinter.ttk import Style
-##from GroundSystem import VideoCapture, Emergency
-from PIL.ImageColor import colormap
-from tkinter.constants import RAISED, GROOVE, SUNKEN, RIDGE
+from tkinter import Frame, LEFT, RIGHT, Label, Button, BOTTOM, ttk
+
 from GroundSystem import TLMdisplayParse
-#from VideoDetection import VideoCapture
-from numpy.core.defchararray import center
+
 import os
 import datetime
+from py._builtin import execfile
+import threading, os
+from subprocess import call  
 
 
-# vidObj = VideoCapture.VideoCapture()    
+#vidObj = VideoCapture.VideoCapture()    
     
 window = "Team Rocket Live Drone Feed"
 
 root = tk.Tk()
-style = tk.ttk.Style()
+style = ttk.Style()
 style.theme_use('classic')
 root.wm_title(window)
 root.configure(bg="black")
@@ -87,27 +87,41 @@ def closeDownRead():
     global closeInd
     return closeInd
 
+def thread_second():
+    call(["python", "Object_Detection_YOLOv3.py"])
+
+
+def startDetection():
+    print('start detect...')
+    processThread = threading.Thread(target=thread_second())  
+    processThread.start()
+
+    #execfile('Object_Detection_YOLOv3.py', globals(), globals())
+    
 exitButton = Button(root, text="ABORT", command = lambda: closeDownSet(1))
 exitButton.pack(side=BOTTOM, fill=tk.BOTH, expand=tk.YES)
+
+detectButton = Button(root, text="Start Detection", command = lambda: startDetection())
+detectButton.pack(side=BOTTOM, fill=tk.BOTH, expand=tk.YES)
 
 x = datetime.datetime.now()
 timeStamp = x.strftime("%m-%d-%y_%h-%M.%S")
 global folder 
 folder = timeStamp
 os.makedirs(folder)
-file = open("videos/readme.txt", "w+")
+file = open("readme.txt", "w+")
 file.write(folder)
 file.close()
 
 
 def refreshData(index):
     
-    altObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,altMsg,index,6,folder)
-    tempObj = TLMdisplayParse.TLMdisplayParse(lVideoFrame,tempMsg,index,1,folder)
-    pwrObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg,index,21,folder)
-    pwrObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg2,index,20,folder)
-    hlthObj1 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg,index,38,folder)
-    hlthObj2 = TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg2,index,41,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,altMsg,index,6,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,tempMsg,index,1,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg,index,21,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,pwrMsg2,index,20,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg,index,38,folder)
+    TLMdisplayParse.TLMdisplayParse(lVideoFrame,hlthMsg2,index,41,folder)
     root.update()
     root.after(50)
 
@@ -123,13 +137,6 @@ while(index < 5084):
     if(index == 4999):
         index = 0
 
-#VideoCapture.VideoCapture('videos/testDrone.mov',lVideoFrame)  
-# for filename in os.listdir('videos'):
-#     if filename.endswith(".png"): 
-#         # print(os.path.join(directory, filename))
-#         VideoCapture.VideoCapture.detectImage(filename) 
-#     else:
-#         continue
 
     
 root.destroy()

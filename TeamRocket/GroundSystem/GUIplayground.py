@@ -1,11 +1,11 @@
 import tkinter as tk
-from tkinter import Frame, BOTH, LEFT, RIGHT, Label, ttk, TOP, NE, BOTTOM
-from tkinter.ttk import Style
+from tkinter import Frame, BOTH, LEFT, RIGHT, Label, TOP, NE, BOTTOM, ttk
+
 
 tlmCategories = ['Altitude', 'Temperature', 'Power', 'Health']
 
 root = tk.Tk()
-style = tk.ttk.Style()
+style = ttk.Style()
 style.theme_use('classic')
 
 mainFrame = Frame(root, height=300, width=1300)

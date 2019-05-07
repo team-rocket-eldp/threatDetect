@@ -4,14 +4,14 @@ from tkinter import font
 from PIL import Image, ImageTk
 import cv2
 import datetime
-import os
+#import os
 
 
 class TLMdisplayParse(object):
 
     obj = TLMFileRead.TLMFileRead()
 #     arr = obj.fileRead('videos/testData.text','videos/testDrone2.mp4')
-    arr = obj.fileRead('videos/testData.text',0)
+    arr = obj.fileRead('simdata/testData.text',0)
     
     cap = arr[0]
     listOfArrays = arr[1]
