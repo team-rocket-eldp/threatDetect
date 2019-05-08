@@ -10,29 +10,32 @@ Created on May 2, 2019
 from importlib import reload  # Python 3.4+ only.
 import numpy
 from grpc.framework.foundation import stream
-reload(numpy)
+from scipy.optimize._trustregion_constr import report
 import cv2 as cv
-#import argparse
+from GroundSystem import TLMFileRead
 import sys
 import os.path
-import obspython
+
 
 
 
 # Initialize the parameters
-confThreshold = 0.2  #Confidence threshold
-nmsThreshold = 0.1  #Non-maximum suppression threshold
+confThreshold = 0.5  #Confidence threshold
+nmsThreshold = 0.4  #Non-maximum suppression threshold
 
 inpWidth = 416  #608     #Width of network's input image
 inpHeight = 416 #608     #Height of network's input image
 
-#parser = argparse.ArgumentParser(description='Object Detection using YOLO in OPENCV')
-#parser.add_argument('--image', help='Path to image file.')
-#parser.add_argument('--video', help='Path to video file.')
-#args = parser.parse_args()
+if not os.path.exists("videos/detects"):
+    os.makedirs("videos/detects")  
+obj = TLMFileRead.TLMFileRead()
+arr = obj.fileRead()
+    
+cap = arr[0]
+listOfArrays = arr[1]
 
 image = 0
-video = 0
+video = 1
         
 # Load names of classes
 classesFile = "/Users/Riggs-MAC/git/TeamRocket/TeamRocket/GroundSystem/models/openimages.names";
@@ -78,27 +81,30 @@ def drawPred(classId, conf, left, top, right, bottom):
     cv.putText(frame, label, (left, top), cv.FONT_HERSHEY_SIMPLEX, 0.75, (0,0,0), 2)
 
 # Remove the bounding boxes with low confidence using non-maxima suppression
-def postprocess(frame, outs):
+def postprocess(frame, outs, currentTime_ms):
     frameHeight = frame.shape[0]
     frameWidth = frame.shape[1]
 
-
+    reportF = open("videos/detects/detects.txt", "w+")
     # Scan through all the bounding boxes output from the network and keep only the
     # ones with high confidence scores. Assign the box's class label as the class with the highest score.
     classIds = []
     confidences = []
     boxes = []
     for out in outs:
-        print("out.shape : ", out.shape)
+        #print("out.shape : ", out.shape)
         for detection in out:
             #if detection[4]>0.001:
             scores = detection[5:]
             classId = numpy.argmax(scores)
             #if scores[classId]>confThreshold:
             confidence = scores[classId]
+            currentTime_us = currentTime_ms*1000
             if detection[4] > confThreshold:
-                print(detection[4], " - ", scores[classId], " - th : ", confThreshold)
-                print(detection)
+                print(detection[4], " - ", scores[classId], " - th : ", confThreshold,"\ttime-\t", currentTime_us)
+                detected = str(detection[4]) + "\t -time:\t" + str(currentTime_us) + "\n"
+                reportF.write(detected)
+                #print(detection)
             if confidence > confThreshold:
                 center_x = int(detection[0] * frameWidth)
                 center_y = int(detection[1] * frameHeight)
@@ -109,7 +115,8 @@ def postprocess(frame, outs):
                 classIds.append(classId)
                 confidences.append(float(confidence))
                 boxes.append([left, top, width, height])
-
+                reportF.write(str(left) + "\t" + str(top) + "\t" + str(width) + "\t" + str(height) + "\n")
+    reportF.close()
     # Perform non maximum suppression to eliminate redundant overlapping boxes with
     # lower confidences.
     indices = cv.dnn.NMSBoxes(boxes, confidences, confThreshold, nmsThreshold)
@@ -126,24 +133,9 @@ def postprocess(frame, outs):
 winName = 'Threat Detection'
 cv.namedWindow(winName, cv.WINDOW_NORMAL)
 
-outputFile = "models/yolo_out_py.avi"
-if (image):
-    # Open the image file
-    if not os.path.isfile("images/object-detection.jpg"):
-        print("Input image file ", "images/object-detection.jpg", " doesn't exist")
-        sys.exit(1)
-    cap = cv.VideoCapture("images/object-detection.jpg")
-    outputFile = 'image_yolo_out_py.jpg'
-elif (video):
-    # Open the video file
-    #if not os.path.isfile(video):
-        #print("Input video file ",video, " doesn't exist")
-        #sys.exit(1)
-    cap = cv.VideoCapture(0)
-    outputFile = 'videos/video_yolo_out_py.avi'
-else:
-    # Webcam input
-    cap = cv.VideoCapture(0)
+
+outputFile = 'videos/video_yolo_out_py.avi'
+
 
 # Get the video writer initialized to save the output video
 if (not image):
@@ -152,6 +144,7 @@ if (not image):
 while cv.waitKey(1) < 0:
     
     # get frame from the video
+    currentTime_ms = cap.get(0)
     hasFrame, frame = cap.read()
     
     # Stop the program if reached end of video
@@ -171,7 +164,7 @@ while cv.waitKey(1) < 0:
     outs = net.forward(getOutputsNames(net))
 
     # Remove the bounding boxes with low confidence
-    postprocess(frame, outs)
+    postprocess(frame, outs, currentTime_ms)
 
     # Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
     t, _ = net.getPerfProfile()

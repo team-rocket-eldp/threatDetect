@@ -10,8 +10,7 @@ import datetime
 class TLMdisplayParse(object):
 
     obj = TLMFileRead.TLMFileRead()
-#     arr = obj.fileRead('videos/testData.text','videos/testDrone2.mp4')
-    arr = obj.fileRead('simdata/testData.text',0)
+    arr = obj.fileRead('videos/testData.text','videos/testDrone2.mp4')
     
     cap = arr[0]
     listOfArrays = arr[1]
