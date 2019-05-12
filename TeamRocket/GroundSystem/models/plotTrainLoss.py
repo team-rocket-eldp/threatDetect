@@ -7,7 +7,7 @@ import sys
 import matplotlib.pyplot as plt
 
 lines = []
-for line in open("/Users/Riggs-MAC/git/TeamRocket/TeamRocket/GroundSystem/models/train.log"):
+for line in open("C:/Users/dylan/Documents/ELDP/TDC/ImageAI/models/train.log"):
     if "avg" in line:
         lines.append(line)
 

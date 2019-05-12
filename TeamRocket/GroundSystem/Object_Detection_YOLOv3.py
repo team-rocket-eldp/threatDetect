@@ -12,10 +12,9 @@ import numpy
 from grpc.framework.foundation import stream
 from scipy.optimize._trustregion_constr import report
 import cv2 as cv
-from GroundSystem import TLMFileRead
+import TLMFileRead
 import sys
 import os.path
-
 
 
 
@@ -28,17 +27,18 @@ inpHeight = 416 #608     #Height of network's input image
 
 if not os.path.exists("videos/detects"):
     os.makedirs("videos/detects")  
+
 obj = TLMFileRead.TLMFileRead()
 arr = obj.fileRead()
-    
+
 cap = arr[0]
 listOfArrays = arr[1]
 
 image = 0
 video = 1
-        
+
 # Load names of classes
-classesFile = "/Users/Riggs-MAC/git/TeamRocket/TeamRocket/GroundSystem/models/openimages.names";
+classesFile = "C:/Users/dylan/Documents/ELDP/TDC/ImageAI/models/openimages.names";
 
 classes = None
 with open(classesFile, 'rt') as f:
@@ -46,8 +46,8 @@ with open(classesFile, 'rt') as f:
 
 # Give the configuration and weight files for the model and load the network using them.
 
-modelConfiguration = "/Users/Riggs-MAC/git/TeamRocket/TeamRocket/GroundSystem/models/yolov3-openimages.cfg";
-modelWeights = "/Users/Riggs-MAC/git/TeamRocket/TeamRocket/GroundSystem/weights/yolov3-openimages.weights";
+modelConfiguration = "C:/Users/dylan/Documents/ELDP/TDC/ImageAI/models/yolov3-openimages.cfg";
+modelWeights = "C:/Users/dylan/Documents/ELDP/TDC/ImageAI/weights/yolov3-openimages.weights";
 
 net = cv.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 net.setPreferableBackend(cv.dnn.DNN_BACKEND_OPENCV)

@@ -2,11 +2,14 @@ import csv
 import cv2
 import subprocess
 
+
 class TLMFileRead(object):
     def __init__(self):
         self.fileRead()
+        
 
     def fileRead(self):
+
         #file = open("readme.txt", "r")
         #folder = file.read()
         
@@ -15,8 +18,8 @@ class TLMFileRead(object):
         #                      shell=True,check=True)
         #proc.kill()
         file = 'logfiles/blackbox_log_2016-03-21_181104.01.csv'
-        cap = cv2.VideoCapture("videos/test.mov") 
-                
+        cap = cv2.VideoCapture("C:/Users/dylan/Documents/ELDP/TDC/ImageAI/simVideo/faces.mp4") 
+
         with open(file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
 
